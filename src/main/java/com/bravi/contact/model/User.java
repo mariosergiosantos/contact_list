@@ -1,5 +1,6 @@
 package com.bravi.contact.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,23 +10,31 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "user")
-public class User {
+public class User implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7332396040333752013L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID_USER")
 	private Long id;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "ID_CONTACT")
+//	@OneToMany( targetEntity=Contacts.class )
+//	@ManyToOne
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@JsonIgnoreProperties(value = "user") 
 	private List<Contacts> contacts;
 
 	@NotBlank
@@ -54,12 +63,12 @@ public class User {
 	public void setContacts(List<Contacts> contacts) {
 		this.contacts = contacts;
 	}
-	
+
 	public void addContact(Contacts contact) {
 		if (this.contacts == null) {
 			this.contacts = new ArrayList<Contacts>();
 		}
-		
+
 		this.contacts.add(contact);
 	}
 
